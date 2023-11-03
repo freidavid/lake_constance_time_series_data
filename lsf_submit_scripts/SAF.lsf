@@ -1,0 +1,52 @@
+#!/bin/bash
+#FST_first_step
+
+#number of processors used (should be equal to the -n of the bsub command
+proc=4
+
+#Load all modules needed
+module load gcc/4.8.2 gdc java/1.8.0_73 angsd/0.925
+
+
+
+
+#Define all paths 
+scr_path_fst="/working/directory"
+sites="positions.beagle.gz"
+fst_dir="/output/directory/"
+reference="WF_wtdbg2.chr.fasta"
+reference_fai="WF_wtdbg2.chr.fasta.fai"
+angsd="/angsd/directory/"
+
+
+
+#Create a file with sites that are considered
+zcat ${sites} | cut -f1 |cut -f9 -d'_' > $scr_path_fst/positions.txt
+zcat ${sites} | cut -f1 |cut -f1-8 -d'_' > $scr_path_fst/chromosomes.txt
+paste $scr_path_fst/chromosomes.txt $scr_path_fst/positions.txt > ${scr_path_fst}/global_intersect_ts.txt
+sed -i '1d' ${scr_path_fst}/global_intersect_ts.txt
+rm $scr_path_fst/positions.txt
+rm $scr_path_fst/chromosomes.txt
+
+#Index intersect file
+angsd sites index ${scr_path_fst}/global_intersect_ts.txt
+
+
+
+index="WF_wtdbg2.chr.fasta.fai"
+cat ${index} | cut -f1 | sed -n '1,3p' > ${scr_path_fst}/chromosome_list.txt
+cat ${index} | cut -f1 | sed -n '5,6p' >> ${scr_path_fst}/chromosome_list.txt
+cat ${index} | cut -f1 | sed -n '8,16p' >> ${scr_path_fst}/chromosome_list.txt
+cat ${index} | cut -f1 | sed -n '18,21p' >> ${scr_path_fst}/chromosome_list.txt
+cat ${index} | cut -f1 | sed -n '23,27p' >> ${scr_path_fst}/chromosome_list.txt
+cat ${index} | cut -f1 | sed -n '29,31p' >> ${scr_path_fst}/chromosome_list.txt
+cat ${index} | cut -f1 | sed -n '33,34p' >> ${scr_path_fst}/chromosome_list.txt
+cat ${index} | cut -f1 | sed -n '36p' >> ${scr_path_fst}/chromosome_list.txt
+cat ${index} | cut -f1 | sed -n '39,40p' >> ${scr_path_fst}/chromosome_list.txt
+
+
+
+#create lists with .bam files and run angsd
+bam_path="/path/to/bam/files"
+ls ${bam_path}/*.bam > ${bam_path}/bam.filelist
+angsd -b ${bam_path}/bam.filelist -out ${scr_path_fst}/output -gl 1 -dosaf 1 -nThreads ${proc} -minMapQ 30 -minQ 20 -remove_bads 1 -uniqueOnly 1 -only_proper_pairs 0 -sites ${scr_path_fst}/global_intersect_ts.txt -rf ${scr_path_fst}/chromosome_list.txt -anc ${reference} -fold 0 
