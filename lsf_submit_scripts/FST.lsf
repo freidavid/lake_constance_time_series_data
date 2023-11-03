@@ -1,0 +1,15 @@
+#!/bin/bash
+
+
+
+#Load all modules needed
+module load gcc/4.8.2 gdc java/1.8.0_73 angsd/0.933
+
+
+POP1="population1"
+POP1="population2"
+
+
+realSFS ${POP1}_min159_fold0.saf.idx ${POP2}_min159_fold0.saf.idx -P 2 -fold 0 > ${POP1}.${POP2}.unfolded.ml
+realSFS fst index ${POP1}_min159_fold0.saf.idx ${sfs_path}/${POP2}_min159_fold0.saf.idx -sfs ${POP1}.${POP2}.unfolded.ml -whichFst 1 -fstout fst_RESULT_${POP1}_${POP2}.unfolded
+realSFS fst stats2 fst_RESULT_${POP1}_${POP2}.unfolded.fst.idx -win 1 -step 1 -fold 0 > Fst_${POP1}_${POP2}_1bp_final.txt
