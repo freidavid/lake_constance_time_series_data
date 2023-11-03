@@ -1,0 +1,150 @@
+#!/bin/bash
+
+#load modules
+module load gdc angsd/0.933
+
+#define_paths
+bam_path="/path/to/bam/files"
+ref="WF_wtdbg2.chr.fasta"
+out="/path/to/store/output"
+bed="/bath/to/bed/file/with/positions"
+proc=2
+outname="output_name"
+
+
+
+#kilch
+ls ${bam_path}/kilch*.bam > ${bam_path}/bam.filelist_kilch
+
+
+
+#GF 
+ls ${bam_path}/gangfisch_pre*.bam > ${bam_path}/bam.filelist_gangfisch_pre
+ls ${bam_path}/gangfisch_during*.bam > ${bam_path}/bam.filelist_gangfisch_during
+ls ${bam_path}/gangfisch_post*.bam > ${bam_path}/bam.filelist_gangfisch_post
+
+
+#blaufelchen
+ls ${bam_path}/blaufelchen_pre*.bam > ${bam_path}/bam.filelist_blaufelchen_pre
+ls ${bam_path}/blaufelchen_during*.bam > ${bam_path}/bam.filelist_blaufelchen_during
+ls ${bam_path3}/blaufelchen_post*.bam > ${bam_path}/bam.filelist_blaufelchen_post
+
+
+#Arenicolus
+ls ${bam_path}/sandfelchen_pre*.bam > ${bam_path}/bam.filelist_arenicolus_pre
+ls ${bam_path}/sandfelchen_during*.bam > ${bam_path}/bam.filelist_arenicolus_during
+ls ${bam_path3}/sandfelchen_post*.bam > ${bam_path}/bam.filelist_arenicolus_post
+
+
+
+
+
+
+#create header
+echo chromo position kilch gangfisch_pre arenicolus_pre blaufelchen_pre gangfisch_during arenicolus_during blaufelchen_during gangfisch_post arenicolus_post blaufelchen_post > $out/frequency_table_${outname}.txt
+
+
+#loop through all positinos in bed file and calculate allele frequencies
+cat $bed | cut -f1,3 -d " "| sed 's/\s/:/g' | while read position; do
+    
+    
+angsd -GL 1 -ref ${ref} -r $position -out $out/freq_test_${position}_kilch -nThreads ${proc} -doMajorMinor 4 -doMaf 1 -bam ${bam_path}/bam.filelist_kilch -minMapQ 30 -minQ 20 -remove_bads 1 -uniqueOnly 1 -only_proper_pairs 0 -doPost 1 
+chrom=$(zcat $out/freq_test_${position}_kilch.mafs.gz  | cut -f1 | sed -n 2p)
+bp=$(zcat $out/freq_test_${position}_kilch.mafs.gz  | cut -f2 | sed -n 2p)
+kilch=$(zcat $out/freq_test_${position}_kilch.mafs.gz  | cut -f6 | sed -n 2p)
+if [ -z "$kilch" ]
+	then
+	k="NA"
+fi
+
+angsd -GL 1 -ref ${ref} -r $position -out $out/freq_test_${position}_arenicolus_pre -nThreads ${proc} -doMajorMinor 4 -doMaf 1 -bam ${bam_path}/bam.filelist_arenicolus_pre -minMapQ 30 -minQ 20 -remove_bads 1 -uniqueOnly 1 -only_proper_pairs 0 -doPost 1  
+arenicolus_pre=$(zcat $out/freq_test_${position}_arenicolus_pre.mafs.gz  | cut -f6 | sed -n 2p)
+if [ -z "$arenicolus_pre" ]
+	then
+	arenicolus_pre="NA"
+fi
+
+
+
+angsd -GL 1 -ref ${ref} -r $position -out $out/freq_test_${position}_gangfisch_pre -nThreads ${proc} -doMajorMinor 4 -doMaf 1 -bam ${bam_path}/bam.filelist_gangfisch_pre -minMapQ 30 -minQ 20 -remove_bads 1 -uniqueOnly 1 -only_proper_pairs 0 -doPost 1  
+gangfisch_pre=$(zcat $out/freq_test_${position}_gangfisch_pre.mafs.gz  | cut -f6 | sed -n 2p)
+if [ -z "$gangfisch_pre" ]
+	then
+	gangfisch_pre="NA"
+fi
+
+
+angsd -GL 1 -ref ${ref} -r $position -out $out/freq_test_${position}_blaufelchen_pre -nThreads ${proc} -doMajorMinor 4 -doMaf 1 -bam ${bam_path}/bam.filelist_blaufelchen_pre -minMapQ 30 -minQ 20 -remove_bads 1 -uniqueOnly 1 -only_proper_pairs 0 -doPost 1  
+blaufelchen_pre=$(zcat $out/freq_test_${position}_blaufelchen_pre.mafs.gz  | cut -f6 | sed -n 2p)
+if [ -z "$blaufelchen_pre" ]
+	then
+	blaufelchen_pre="NA"
+fi
+
+
+
+angsd -GL 1 -ref ${ref} -r $position -out $out/freq_test_${position}_arenicolus_during -nThreads ${proc} -doMajorMinor 4 -doMaf 1 -bam ${bam_path}/bam.filelist_arenicolus_during -minMapQ 30 -minQ 20 -remove_bads 1 -uniqueOnly 1 -only_proper_pairs 0 -doPost 1  
+arenicolus_during=$(zcat $out/freq_test_${position}_arenicolus_during.mafs.gz  | cut -f6 | sed -n 2p)
+if [ -z "$arenicolus_during" ]
+	then
+	arenicolus_during="NA"
+fi
+
+
+
+angsd -GL 1 -ref ${ref} -r $position -out $out/freq_test_${position}_gangfisch_during -nThreads ${proc} -doMajorMinor 4 -doMaf 1 -bam ${bam_path}/bam.filelist_gangfisch_during -minMapQ 30 -minQ 20 -remove_bads 1 -uniqueOnly 1 -only_proper_pairs 0 -doPost 1  
+gangfisch_during=$(zcat $out/freq_test_${position}_gangfisch_during.mafs.gz  | cut -f6 | sed -n 2p)
+if [ -z "$gangfisch_during" ]
+	then
+	gangfisch_during="NA"
+fi
+
+
+
+angsd -GL 1 -ref ${ref} -r $position -out $out/freq_test_${position}_blaufelchen_during -nThreads ${proc} -doMajorMinor 4 -doMaf 1 -bam ${bam_path}/bam.filelist_blaufelchen_during -minMapQ 30 -minQ 20 -remove_bads 1 -uniqueOnly 1 -only_proper_pairs 0 -doPost 1  
+blaufelchen_during=$(zcat $out/freq_test_${position}_blaufelchen_during.mafs.gz  | cut -f6 | sed -n 2p)
+if [ -z "$blaufelchen_during" ]
+	then
+	blaufelchen_during="NA"
+fi
+
+
+
+
+
+
+angsd -GL 1 -ref ${ref} -r $position -out $out/freq_test_${position}_arenicolus_post -nThreads ${proc} -doMajorMinor 4 -doMaf 1 -bam ${bam_path}/bam.filelist_arenicolus_post -minMapQ 30 -minQ 20 -remove_bads 1 -uniqueOnly 1 -only_proper_pairs 0 -doPost 1  
+arenicolus_post=$(zcat $out/freq_test_${position}_arenicolus_post.mafs.gz  | cut -f6 | sed -n 2p)
+if [ -z "$arenicolus_post" ]
+	then
+	arenicolus_post="NA"
+fi
+
+
+
+angsd -GL 1 -ref ${ref} -r $position -out $out/freq_test_${position}_gangfisch_post -nThreads ${proc} -doMajorMinor 4 -doMaf 1 -bam ${bam_path}/bam.filelist_gangfisch_post -minMapQ 30 -minQ 20 -remove_bads 1 -uniqueOnly 1 -only_proper_pairs 0 -doPost 1  
+gangfisch_post=$(zcat $out/freq_test_${position}_gangfisch_post.mafs.gz  | cut -f6 | sed -n 2p)
+if [ -z "$gangfisch_post" ]
+	then
+	gangfisch_post="NA"
+fi
+
+
+
+angsd -GL 1 -ref ${ref} -r $position -out $out/freq_test_${position}_blaufelchen_post -nThreads ${proc} -doMajorMinor 4 -doMaf 1 -bam ${bam_path}/bam.filelist_blaufelchen_post -minMapQ 30 -minQ 20 -remove_bads 1 -uniqueOnly 1 -only_proper_pairs 0 -doPost 1  
+blaufelchen_post=$(zcat $out/freq_test_${position}_blaufelchen_post.mafs.gz  | cut -f6 | sed -n 2p)
+if [ -z "$blaufelchen_post" ]
+	then
+	blaufelchen_post="NA"
+fi
+
+
+
+
+
+
+
+echo $chrom $bp $kilch $gangfisch_pre $arenicolus_pre $blaufelchen_pre $gangfisch_during $arenicolus_during $blaufelchen_during $gangfisch_post $arenicolus_post $blaufelchen_post >> $out/frequency_table_${outname}.txt
+
+
+done
