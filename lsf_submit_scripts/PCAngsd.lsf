@@ -1,0 +1,17 @@
+#!/bin/bash
+
+
+## load modules 
+module load gcc/4.8.2 gdc python/3.6.1
+
+
+#Define all paths needed
+input="/path/to/input/beagle/file/"
+out="/path/to/write/output/files"
+pcangsd_1_02="/path/to/pcangsd/pcangsd.py"
+
+
+###############################################################################################
+
+#Then run PCAngsd on beagle (genotype likelihood) file:
+python $pcangsd_1_02 -beagle ${scr_path}/input.beagle.gz -o ${out}/output -minMaf 0.05 -e 3
