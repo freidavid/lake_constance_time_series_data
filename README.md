@@ -62,6 +62,7 @@ Used to plot output of PCAngsd.lsf.
 Used to plot allele frequency results of maf_at_position.lsf.
 
 #### manhattan_custom.R
-R script to generate custom manhattan plot, modified from package qqman (Turner, 2018).
+R script to generate custom manhattan plot, modified from R package qqman (Turner, 2018).
 
-
+#### relatedness.R
+Used to plot relatedness analysis (for supplement).
