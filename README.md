@@ -35,6 +35,14 @@ Used to merge the single beagle files of each chromosomes into one genome-wide f
 #### PCAngsd.lsf
 Used to do a genomic PCA.
 
+#### SAF.lsf
+Used to calculate site allele frequencies for the FST analysis.
+
+#### FST.lsf
+FST analysis based on site allele frequency spectra.
+
+#### maf_at_position.lsf
+Used to calculate allele frequencies based on genotype likelihoods.
 
 
 ## R_scripts
