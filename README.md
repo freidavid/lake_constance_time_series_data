@@ -45,4 +45,23 @@ FST analysis based on site allele frequency spectra.
 Used to calculate allele frequencies based on genotype likelihoods.
 
 
+
+
 ## R_scripts
+
+#### Figure_1.R
+Script to produce first figure of the paper.
+
+#### FST.R
+FST analysis to generate bed files with most differentiated positions (used as input to maf_at_position.lsf).
+
+#### PCA.R
+Used to plot output of PCAngsd.lsf.
+
+#### frequencies.R
+Used to plot allele frequency results of maf_at_position.lsf.
+
+#### manhattan_custom.R
+R script to generate custom manhattan plot, modified from package qqman (Turner, 2018).
+
+
