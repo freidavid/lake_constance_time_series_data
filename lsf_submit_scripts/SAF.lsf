@@ -1,5 +1,5 @@
 #!/bin/bash
-#FST_first_step
+#First step for FST and genetic diversity calculations
 
 #number of processors used (should be equal to the -n of the bsub command
 proc=4
@@ -32,7 +32,7 @@ rm $scr_path_fst/chromosomes.txt
 angsd sites index ${scr_path_fst}/global_intersect_ts.txt
 
 
-
+#create chromosome list to remove chromosomes with potential duplications
 index="WF_wtdbg2.chr.fasta.fai"
 cat ${index} | cut -f1 | sed -n '1,3p' > ${scr_path_fst}/chromosome_list.txt
 cat ${index} | cut -f1 | sed -n '5,6p' >> ${scr_path_fst}/chromosome_list.txt
